@@ -1,6 +1,8 @@
 import React from "react";
 import BotCollection from './BotCollection'
 import YourBotArmy from './YourBotArmy'
+import BotSpecs from '../components/BotSpecs'
+
 
 class BotsPage extends React.Component {
   constructor(){
@@ -8,7 +10,9 @@ class BotsPage extends React.Component {
 
     this.state = {
       bots: [],
-      botArmy: []
+      botArmy: [],
+      clicked: false,
+      currentBot: ''
     }
   }
 
@@ -59,14 +63,7 @@ class BotsPage extends React.Component {
 
       this.setState({bots: changedBots}) 
     
-    //   const removeFromArmy = this.state.botArmy.filter(bot1 => {
-    //     if(bot1.owned !== bot){
-    //       return bot
-    //     }
-    //   })
-    //   this.setState({botArmy: removeFromArmy})
-    // }
-
+  
     bot.owned = false
     let removedFromArmy = []
     this.state.bots.forEach(botA => {
@@ -78,12 +75,27 @@ class BotsPage extends React.Component {
   }
   }
 
+  handleBotClick = (bot) => {
+    this.setState({clicked: !this.state.clicked})
+    this.setState({currentBot: bot})
+  }
+
+ 
+  handleGoBack = () => {
+    this.setState({clicked: !this.state.clicked})
+  }
+
+  
+
 
   render() {
     return (
       <div>
         <YourBotArmy handleRemoveBot={this.handleRemoveBot} botArmy={this.state.botArmy} />
-        <BotCollection handleAddBot={this.handleAddBot} bots={this.state.bots} />
+       
+       {this.state.clicked === true ? <BotSpecs handleGoBack={this.handleGoBack} handleAddBot={this.handleAddBot} bot={this.state.currentBot} /> : <BotCollection clicked={this.state.clicked} handleRemoveBot={this.props.handleRemoveBot} bots={this.state.bots} handleBotClick={this.handleBotClick} />} 
+
+        
       </div>
     );
   }
