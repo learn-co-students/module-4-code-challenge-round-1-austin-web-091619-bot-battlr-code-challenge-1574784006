@@ -1,19 +1,19 @@
 import React from "react";
 import BotCollection from './BotCollection'
 import YourBotArmy from './YourBotArmy'
-
+import BotSpecs from '../components/BotSpecs'
 class BotsPage extends React.Component {
   //start here with your code for step one
   state = {
     bots:[],
-    botArmy:[]
+    botArmy:[],
+    inspectBot: null
   }
 
   componentDidMount=()=>{
     fetch(`https://bot-battler-api.herokuapp.com/api/v1/bots`)
     .then(resp=>resp.json())
     .then(bots=>{
-      console.log(bots)
       this.setState({ 
         bots: bots })
     })
@@ -35,6 +35,17 @@ class BotsPage extends React.Component {
       })
     }
   }
+  handleInspectBot=(id)=>{
+    this.setState({
+      inspectBot: this.state.bots.find(bot=>bot.id===id)
+    })
+  }
+  
+  handleClearInspect=()=>{
+    this.setState({
+      inspectBot: null
+    })
+  }
 
 
 
@@ -42,7 +53,10 @@ class BotsPage extends React.Component {
     return (
       <div>
         <YourBotArmy handleRemoveBot={this.handleRemoveBot} botArmy={this.state.botArmy}/>
-        <BotCollection handleAddBot={this.handleAddBot} bots={this.state.bots} />
+        { this.state.inspectBot ?
+          <BotSpecs bot={ this.state.inspectBot } handleAddBot={this.handleAddBot} handleClearInspect={this.handleClearInspect}/> :
+          <BotCollection handleInspectBot={this.handleInspectBot} bots={this.state.bots} />
+        }
       </div>
     );
   }
