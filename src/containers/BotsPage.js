@@ -1,12 +1,89 @@
 import React from "react";
+import BotCollection from './BotCollection'
+import YourBotArmy from './YourBotArmy'
 
 class BotsPage extends React.Component {
-  //start here with your code for step one
+  constructor(){
+    super()
+
+    this.state = {
+      bots: [],
+      botArmy: []
+    }
+  }
+
+  componentDidMount(){
+    fetch('https://bot-battler-api.herokuapp.com/api/v1/bots')
+    .then(r => r.json())
+    .then(bots => {
+      const addOwnedToBots = bots.map(bot => {
+        bot.owned = false
+      return bot})
+      this.setState({bots: addOwnedToBots})
+    })
+    .catch(e => console.log(e))
+  }
+
+
+  handleAddBot = (bot) => {
+   
+    if(bot.owned !== true){
+    const changedBots = this.state.bots.map(b => {
+      if(b === bot){
+        b.owned = true
+        return b
+      }
+      return b
+    })
+    this.setState({bots: changedBots})
+
+
+    bot.owned = true
+    let addToArmy = this.state.botArmy
+    addToArmy.push(bot)
+    this.setState({botArmy: addToArmy})
+  }
+  }
+
+
+  handleRemoveBot = (bot) => {
+
+    if(bot.owned !== false){
+      const changedBots = this.state.bots.map(b => {
+        if(b === bot){
+          b.owned = false
+          return b
+        }
+        return b
+      })
+
+      this.setState({bots: changedBots}) 
+    
+    //   const removeFromArmy = this.state.botArmy.filter(bot1 => {
+    //     if(bot1.owned !== bot){
+    //       return bot
+    //     }
+    //   })
+    //   this.setState({botArmy: removeFromArmy})
+    // }
+
+    bot.owned = false
+    let removedFromArmy = []
+    this.state.bots.forEach(botA => {
+      if (botA.owned === true){
+        removedFromArmy.push(botA)
+      }
+    })
+    this.setState({botArmy: removedFromArmy})
+  }
+  }
+
 
   render() {
     return (
       <div>
-        {/* put your components here */}
+        <YourBotArmy handleRemoveBot={this.handleRemoveBot} botArmy={this.state.botArmy} />
+        <BotCollection handleAddBot={this.handleAddBot} bots={this.state.bots} />
       </div>
     );
   }
